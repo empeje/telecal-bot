@@ -47,4 +47,13 @@ bot.command("start", async (ctx) => {
     await ctx.reply("Check out this menu:", {reply_markup: menu});
 });
 
+// Global error handler
+bot.catch(async (error) => {
+    const ctx = error.ctx;
+    // Log the error
+    console.error('Error in bot:', error);
+    // You can also notify the user about the error or take other actions
+    await ctx.reply("Both is having internal error, please try again.");
+});
+
 bot.start();
