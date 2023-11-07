@@ -5,13 +5,24 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
+    "dev": "nodemon pnpm run start",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@grammyjs/conversations": "^1.1.2",
+    "@grammyjs/menu": "^1.2.1",
+    "@grammyjs/storage-free": "^2.4.0",
     "dotenv": "^16.3.1",
-    "grammy": "^1.19.2"
+    "ejs": "^3.1.9",
+    "grammy": "^1.19.2",
+    "moment": "^2.29.4",
+    "moment-timezone": "^0.5.43",
+    "node-ical": "^0.16.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
   }
 }
