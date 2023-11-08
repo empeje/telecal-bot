@@ -16,6 +16,8 @@
     "@grammyjs/menu": "^1.2.1",
     "@grammyjs/runner": "^2.0.3",
     "@grammyjs/storage-free": "^2.4.0",
+    "@sentry/node": "^7.77.0",
+    "@sentry/profiling-node": "^1.2.6",
     "dotenv": "^16.3.1",
     "ejs": "^3.1.9",
     "grammy": "^1.19.2",
