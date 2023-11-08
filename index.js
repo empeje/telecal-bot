@@ -12,6 +12,22 @@ const {
     createConversation,
 } = require("@grammyjs/conversations");
 
+const Sentry = require("@sentry/node");
+const { ProfilingIntegration } = require("@sentry/profiling-node");
+
+Sentry.init({
+  dsn: process.env.SENTRY_DSN,
+  integrations: [
+    new ProfilingIntegration(),
+  ],
+  // Performance Monitoring
+  tracesSampleRate: 1.0,
+  // Set sampling rate for profiling - this is relative to tracesSampleRate
+  profilesSampleRate: 1.0,
+});
+
+
+
 // Bot setup
 
 const bot = new Bot(process.env.BOT_TOKEN); // <-- put your bot token between the "" (https://t.me/BotFather)
