@@ -4,7 +4,7 @@ const {createCalendarLink, createMyICalTemplate} =require('./templates')
 const {Bot, session} = require("grammy");
 const {Menu} = require("@grammyjs/menu");
 const {freeStorage} = require("@grammyjs/storage-free");
-const {getEventForTheNext1Month} = require("./iCalManager");
+const {getEventForTheNext1Month, getAppointments, generateFreeSlots} = require("./iCalManager");
 
 const {
     conversations,
@@ -36,7 +36,14 @@ const menu = new Menu("my-menu-identifier")
     .text("Get my calendar link", (ctx) => ctx.reply(createCalendarLink(ctx.from), {parse_mode: "MarkdownV2"})).row()
     .text("Show my iCal link", (ctx) => ctx.reply(createMyICalTemplate(ctx.session.iCalLink), {parse_mode: "MarkdownV2"})).row()
     .text("Change my iCal link", (ctx) => ctx.conversation.enter("askForICal")).row()
-    .text("Show my next schedules", async (ctx) => ctx.reply(await getEventForTheNext1Month(ctx.session.iCalLink)));
+    .text("Show my next schedules", async (ctx) => ctx.reply(await getEventForTheNext1Month(ctx.session.iCalLink), {parse_mode: "HTML"})).row()
+    .text("Show my free slots", async (ctx) => {
+        let from = new Date();
+        let until = new Date(from.getFullYear(), from.getMonth(), from.getDate() + 1);
+        const events = generateFreeSlots(await getAppointments(ctx.session.iCalLink), from, until);
+        console.log({e: events})
+        ctx.reply(events.map(e => `${e.start.toLocaleString('en-US', { hour: 'numeric', hour12: true})} - ${e.end.toLocaleString('en-US', { hour: 'numeric', hour12: true})}`).join("\n"));
+    });
 
 // Make it interactive.
 bot.use(menu);

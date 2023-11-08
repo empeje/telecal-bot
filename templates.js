@@ -12,4 +12,10 @@ const createCalendarLink = (from) => {
     return rendered_template;
 }
 
-module.exports = {createCalendarLink, createMyICalTemplate}
+const createEvents = (events) => {
+    const template = fs.readFileSync('./templates/my_events.txt.ejs', 'utf8');
+    const rendered_template = ejs.render(template, {events})
+    return rendered_template;
+}
+
+module.exports = {createCalendarLink, createMyICalTemplate, createEvents}

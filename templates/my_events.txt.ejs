@@ -1,0 +1,8 @@
+Events for the next month:
+
+<% for (let i = 0; i < events.length; i++) { %>
+Event: <strong><%= events[i].summary %></strong>
+Start: <%= events[i].start %>
+End: <%= events[i].end %>
+Location: <%= events[i].location %>
+<% } %>

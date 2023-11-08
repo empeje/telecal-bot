@@ -1,7 +1,8 @@
 const ical = require('node-ical');
 const moment = require('moment-timezone');
+const {createEvents} = require("./templates");
 
-const getEventForTheNext1Month = async (iCalLink)  => {
+async function getAppointments(iCalLink) {
     const data = await ical.async.fromURL(iCalLink, {});
 
     // Get the current date and the date one month from now
@@ -13,23 +14,33 @@ const getEventForTheNext1Month = async (iCalLink)  => {
         const eventDate = moment(event.start);
         return eventDate.isBetween(now, oneMonthFromNow, null, '[]');
     });
-
-    // Print the filtered events
-
-    let replyMessage = "";
-
-    replyMessage += 'Events for the next month:\n';
-
-    eventsForNextMonth.forEach((event) => {
-        if(!event.start)
-            return;
-        replyMessage += 'Event:' + event.summary;
-        replyMessage += 'Start:' + event.start;
-        replyMessage += 'End:' + event.end;
-        replyMessage += 'Location:' + event.location;
-        replyMessage += '\n';
-    });
-    return replyMessage;
+    return eventsForNextMonth.filter(event => !!event.start).sort((a, b) => a.start - b.start);
 }
 
-module.exports = {getEventForTheNext1Month}
+const generateFreeSlots = (events, from, until) => {
+    const oneHour = 60 * 60 * 1000;
+    const freeSlots = [];
+
+    from.setMinutes(0, 0); // from the current hours
+    until.setHours(0, 0, 0, 0); // until the last hour tomorrow
+
+    for (let time = from.getTime(); time < until.getTime(); time += oneHour) {
+        const slotStart = new Date(time);
+        const slotEnd = new Date(time + oneHour);
+        const isSlotFree = !events.some(event => (slotStart < event.end && slotEnd > event.start));
+        if (isSlotFree) {
+            freeSlots.push({ start: slotStart, end: slotEnd });
+        }
+    }
+
+    return freeSlots;
+};
+
+const getEventForTheNext1Month = async (iCalLink)  => {
+    const eventsForNextMonth = await getAppointments(iCalLink);
+
+    // Print the filtered events
+    return createEvents(eventsForNextMonth);
+}
+
+module.exports = {getEventForTheNext1Month, generateFreeSlots, getAppointments}
